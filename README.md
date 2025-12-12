@@ -1,59 +1,280 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DataCare Solutions – Servicios Web (REST + SOAP)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este proyecto implementa un sistema de Servicios Web usando Laravel 12, combinando:
 
-## About Laravel
+- API REST (JSON)
+- Servicio SOAP (XML + WSDL)
+- Base de datos MySQL
+- Cliente SOAP en PHP
+- Panel administrativo (Filament)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+El objetivo es demostrar la integración real de múltiples tecnologías de servicios web, tal como se solicita en un examen práctico integral.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 1️⃣ Requisitos del sistema
 
-## Learning Laravel
+Antes de iniciar, el sistema debe contar con:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- Linux (recomendado Arch / Ubuntu)
+- PHP ≥ 8.2 (probado con PHP 8.4)
+- Composer
+- MySQL o MariaDB
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Extensiones PHP requeridas:
 
-## Laravel Sponsors
+- `pdo`
+- `pdo_mysql`
+- `soap`
+- `fileinfo`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Verificar extensiones:
 
-### Premium Partners
+```bash
+php -m | grep -E "pdo|mysql|soap|fileinfo"
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 2️⃣ Clonar o preparar el proyecto
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Ubicarse en el directorio de trabajo:
 
-## Code of Conduct
+```bash
+cd ~/Documents
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+*(En tu caso real puede variar)*
 
-## Security Vulnerabilities
+### Si es desde repositorio:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+git clone <url-del-repo>
+cd datacare-solutions
+```
 
-## License
+### Si ya tenés el proyecto:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cd datacare-solutions
+```
+
+---
+
+## 3️⃣ Instalar dependencias
+
+```bash
+composer install
+```
+
+Si Composer no está instalado:
+
+```bash
+sudo pacman -S composer
+```
+
+---
+
+## 4️⃣ Configuración del entorno
+
+### Copiar el archivo de entorno:
+
+```bash
+cp .env.example .env
+```
+
+### Generar la clave de la aplicación:
+
+```bash
+php artisan key:generate
+```
+
+### Editar .env:
+
+```bash
+micro .env
+```
+
+### Configuración mínima requerida:
+
+```env
+APP_NAME="DataCare Solutions"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=datacare
+DB_USERNAME=datacare
+DB_PASSWORD=SuperSeguro123!
+```
+
+---
+
+## 5️⃣ Base de datos
+
+### Crear la base de datos en MySQL:
+
+```sql
+CREATE DATABASE datacare;
+```
+
+### Ejecutar migraciones:
+
+```bash
+php artisan migrate
+```
+
+### (Opcional) Poblar datos de prueba:
+
+```bash
+php artisan db:seed
+```
+
+---
+
+## 6️⃣ Limpiar cachés
+
+*(importante en Laravel 12)*
+
+```bash
+php artisan optimize:clear
+php artisan config:clear
+```
+
+---
+
+## 7️⃣ Iniciar el servidor
+
+```bash
+php artisan serve
+```
+
+Servidor disponible en: `http://127.0.0.1:8000`
+
+---
+
+## 8️⃣ Verificación de rutas
+
+Verificar que las rutas REST y SOAP estén activas:
+
+```bash
+php artisan route:list
+```
+
+Deberías ver:
+- `api/patients`
+- `soap/patients`
+
+---
+
+## 9️⃣ Probar el servicio SOAP (WSDL)
+
+### Verificar el WSDL:
+
+```bash
+curl http://127.0.0.1:8000/soap/patients?wsdl
+```
+
+Debe devolver un XML con:
+- `definitions`
+- `portType`
+- `binding`
+- `service`
+
+Si ves eso → **SOAP activo**.
+
+---
+
+## 🔟 Probar SOAP vía CURL
+
+```bash
+curl -X POST http://127.0.0.1:8000/soap/patients \
+  -H "Content-Type: text/xml; charset=utf-8" \
+  -H "SOAPAction: getPatients" \
+  -d '<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:tns="http://datacare.test/soap/patients">
+  <soapenv:Body>
+    <tns:getPatients/>
+  </soapenv:Body>
+</soapenv:Envelope>'
+```
+
+### Respuesta esperada:
+
+```xml
+<patients>
+  <patients>Nombre Paciente 1</patients>
+  <patients>Nombre Paciente 2</patients>
+</patients>
+```
+
+---
+
+## 1️⃣1️⃣ Cliente SOAP en PHP
+
+### Ejecución:
+
+```bash
+php client-soap.php
+```
+
+### Salida esperada:
+
+```
+stdClass Object
+(
+    [patients] => Array
+        (
+            [0] => Nombre 1
+            [1] => Nombre 2
+        )
+)
+```
+
+Esto confirma:
+- WSDL correcto
+- Método SOAP funcional
+- Conexión a BD válida
+
+---
+
+## 1️⃣2️⃣ Panel administrativo
+
+*(Opcional)*
+
+Acceder a: `http://127.0.0.1:8000/admin`
+
+Aquí se gestiona la información desde interfaz gráfica usando Filament.
+
+---
+
+## 1️⃣3️⃣ Conceptos clave para examen
+
+Este proyecto demuestra:
+
+- Diferencia entre REST vs SOAP
+- Uso de WSDL
+- Comunicación XML
+- Manejo correcto de errores SOAP
+- Consumo desde cliente PHP
+- Integración con base de datos
+- Arquitectura limpia en Laravel 12
+
+---
+
+## 1️⃣4️⃣ Nota final
+
+⚠️ **Este proyecto no depende de datos específicos.**
+
+El mismo patrón se puede reutilizar para:
+- Pacientes
+- Usuarios
+- Productos
+- Facturas
+- Cualquier entidad
+
+**Cambian los nombres, no la lógica.**
